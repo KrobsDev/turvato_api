@@ -196,7 +196,7 @@ class Product
     // get a single product
     public function getOneProduct()
     {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE prod_id = :prod_id";
+        $sql = "SELECT * FROM " . $this->table_name . " p JOIN categories ON categories.cat_id=p.product_cat JOIN type ON type_id=p.product_type WHERE p.prod_id = :prod_id";
 
         // clean the data
         $this->prod_id = htmlspecialchars(strip_tags($this->prod_id));
@@ -239,6 +239,42 @@ class Product
     }
 
 
+    // get all categories
+    public function getAllCategories()
+    {
+        $sql = "SELECT * FROM categories";
+
+        // prepare the statement
+        $stmt = $this->conn->prepare($sql);
+
+        // execute the statement
+        $stmt->execute();
+
+        // get the required data from the query
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $row;
+    }
+
+
+
+    // get all types
+    public function getAllTypes()
+    {
+        $sql = "SELECT * FROM type";
+
+        // prepare the statement
+        $stmt = $this->conn->prepare($sql);
+
+        // execute the statement
+        $stmt->execute();
+
+        // get the required data from the query
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $row;
+    }
+
     //--------------------------------------------------------------------------- 
     /**
      * UPDATE Queries
@@ -278,7 +314,7 @@ class Product
         $stmt->bindParam(':prod_keywords', $this->prod_keywords);
 
         // execute the query
-        return $stmt->execute() ? true : false;
+        return $stmt->execute();
     }
 
 
@@ -290,4 +326,24 @@ class Product
     /**
      * DELETE Queries
      */
+
+
+    //  delete product
+    public function deleteProduct()
+    {
+        // sql query to delete a product
+        $sql = "DELETE FROM " . $this->table_name . " WHERE prod_id=:pid";
+
+        // clean the id
+        $this->prod_id = htmlspecialchars(strip_tags($this->prod_id));
+
+        // prepare the statement
+        $stmt = $this->conn->prepare($sql);
+
+        // bind parameters
+        $stmt->bindParam(':pid', $this->prod_id);
+
+        // execute the statement
+        return $stmt->execute();
+    }
 }

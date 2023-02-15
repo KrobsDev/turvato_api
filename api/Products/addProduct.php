@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product->prod_name = $data->prod_name;
     $product->prod_desc = $data->prod_desc;
     $product->prod_cat = $data->prod_cat;
-    $product->prod_price = $data->prod_price;
-    $product->prod_type = $data->prod_type;
+    $product->prod_price = $data->prod_price ?? 0;
+    $product->prod_type = empty($data->prod_price) ? 2 : $data->prod_type;
     $product->prod_keywords = $data->prod_keywords;
     $product->prod_image = $data->prod_image;
 
@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($chk_duplicates['product_name'] === $data->prod_name) {
         echo json_encode(array(
+            'status' => 2,
             'message' => 'Product already exists'
         ));
     } else {
@@ -45,10 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             echo json_encode(array(
+                'status' => 1,
                 'message' => 'Product added successfully'
             ));
         } else {
             echo json_encode(array(
+                'status' => 3,
                 'message' => 'Failed'
             ));
         }
